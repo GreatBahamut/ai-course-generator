@@ -38,6 +38,9 @@ public class CourseGeneration {
     @Column(nullable = false)
     private CourseGenerationStatus status;
 
+    @Column(name = "generated_content", columnDefinition = "TEXT")
+    private String generatedContent;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -113,6 +116,14 @@ public class CourseGeneration {
 
     public void setStatus(CourseGenerationStatus status) {
         this.status = status;
+    }
+
+    public String getGeneratedContent() {
+        return generatedContent;
+    }
+
+    public void setGeneratedContent(String generatedContent) {
+        this.generatedContent = generatedContent;
     }
 
     public LocalDateTime getCreatedAt() {

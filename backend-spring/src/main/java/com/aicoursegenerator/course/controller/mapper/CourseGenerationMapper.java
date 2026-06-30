@@ -16,6 +16,7 @@ public class CourseGenerationMapper {
                 entity.getTargetAudience(),
                 entity.getDifficulty(),
                 entity.getStatus(),
+                entity.getGeneratedContent(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt()
         );

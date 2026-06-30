@@ -62,7 +62,7 @@ Permite validar el backend sin depender de infraestructura externa. La migració
 - Spring Boot concentra toda la lógica de negocio.
 - n8n únicamente orquesta procesos.
 - React nunca consume servicios externos directamente.
-- Toda integración con IA deberá implementarse mediante una interfaz `AIProvider`.
+- Toda integración con IA deberá implementarse mediante una interfaz `AIClient`.
 
 ## Sprint 2
 
@@ -174,4 +174,24 @@ Se establece base de contrato estable para la API antes de introducir complejida
 - El dominio depende únicamente de la interfaz AIClient.
 - La implementación concreta podrá cambiar sin modificar la lógica de negocio.
 - En la primera etapa AIClient utiliza una firma simple basada en String.
-- Si la integración requiere parámetros adicionales (modelo, temperatura, tokens, etc.), se reemplazará por un objeto de request dedicado (AIGenerationRequest), evitando romper la arquitectura.
+- Si la integración requiere parámetros adicionales (modelo, temperatura, tokens, etc.), se reemplazará por un objeto de request dedicado(AIGenerationRequest), evitando romper la arquitectura.
+- Nota: Durante el Sprint 5 la orquestación de la generación fue trasladada a n8n. El módulo integration.ai se conserva como referencia arquitectónica y posible punto de reutilización futuro, aunque el flujo principal ya no invoca directamente a AIClient.
+
+## Sprint 5 – Automation Architecture
+
+- Spring Boot deja de ser el orquestador principal del proceso de generación.
+- Spring Boot mantiene únicamente responsabilidades de dominio, persistencia, validaciones y API REST.
+- n8n pasa a ser el orquestador oficial de todo el flujo de automatización.
+- Claude/OpenAI pasan a ser proveedores de generación de contenido.
+- Google Drive, Gmail, ElevenLabs, Runway y Midjourney serán invocados desde n8n.
+- El backend nunca conocerá esos servicios directamente.
+- La comunicación entre n8n y Spring Boot se realiza exclusivamente mediante endpoints REST.
+
+### Flujo de generación
+
+La generación de un curso se divide en dos responsabilidades:
+
+- Spring Boot administra el ciclo de vida del dominio (PENDING → GENERATING → COMPLETED).
+- n8n ejecuta el proceso de automatización, consume proveedores externos y devuelve el resultado al backend.
+
+De esta forma el backend nunca contiene lógica específica de proveedores externos.

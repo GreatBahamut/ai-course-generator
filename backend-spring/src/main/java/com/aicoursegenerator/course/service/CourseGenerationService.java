@@ -5,8 +5,7 @@ import com.aicoursegenerator.course.domain.CourseGeneration;
 import com.aicoursegenerator.course.domain.CourseGenerationStatus;
 import com.aicoursegenerator.course.exception.CourseGenerationNotFoundException;
 import com.aicoursegenerator.course.repository.CourseGenerationRepository;
-import com.aicoursegenerator.integration.ai.AIClient;
-import com.aicoursegenerator.integration.ai.prompt.CoursePromptBuilder;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,14 +14,9 @@ import java.util.List;
 public class CourseGenerationService {
 
     private final CourseGenerationRepository courseGenerationRepository;
-    private final AIClient aiClient;
-    private final CoursePromptBuilder coursePromptBuilder;
 
-    public CourseGenerationService(CourseGenerationRepository courseGenerationRepository, AIClient aiClient,
-                                    CoursePromptBuilder coursePromptBuilder) {
+    public CourseGenerationService(CourseGenerationRepository courseGenerationRepository) {
         this.courseGenerationRepository = courseGenerationRepository;
-        this.aiClient = aiClient;
-        this.coursePromptBuilder = coursePromptBuilder;
     }
 
     public CourseGeneration createCourseGeneration(String title, String topic, String targetAudience,
@@ -49,12 +43,6 @@ public class CourseGenerationService {
         }
 
         courseGeneration.setStatus(CourseGenerationStatus.GENERATING);
-        courseGenerationRepository.save(courseGeneration);
-
-        String prompt = coursePromptBuilder.buildPrompt(courseGeneration);
-        aiClient.generateContent(prompt);
-
-        courseGeneration.setStatus(CourseGenerationStatus.COMPLETED);
         return courseGenerationRepository.save(courseGeneration);
     }
 
@@ -67,6 +55,20 @@ public class CourseGenerationService {
                             + courseGeneration.getStatus());
         }
 
+        courseGeneration.setStatus(CourseGenerationStatus.COMPLETED);
+        return courseGenerationRepository.save(courseGeneration);
+    }
+
+    public CourseGeneration completeGeneration(Long id, String generatedContent) {
+        CourseGeneration courseGeneration = getOrThrow(id);
+
+        if (courseGeneration.getStatus() != CourseGenerationStatus.GENERATING) {
+            throw new IllegalStateException(
+                    "CourseGeneration must be in GENERATING status to complete generation. Current status: "
+                            + courseGeneration.getStatus());
+        }
+
+        courseGeneration.setGeneratedContent(generatedContent);
         courseGeneration.setStatus(CourseGenerationStatus.COMPLETED);
         return courseGenerationRepository.save(courseGeneration);
     }

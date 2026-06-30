@@ -13,18 +13,20 @@ public class CourseGenerationResponse {
     private final String targetAudience;
     private final CourseDifficulty difficulty;
     private final CourseGenerationStatus status;
+    private final String generatedContent;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
     public CourseGenerationResponse(Long id, String title, String topic, String targetAudience,
                                      CourseDifficulty difficulty, CourseGenerationStatus status,
-                                     LocalDateTime createdAt, LocalDateTime updatedAt) {
+                                     String generatedContent, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.title = title;
         this.topic = topic;
         this.targetAudience = targetAudience;
         this.difficulty = difficulty;
         this.status = status;
+        this.generatedContent = generatedContent;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -51,6 +53,10 @@ public class CourseGenerationResponse {
 
     public CourseGenerationStatus getStatus() {
         return status;
+    }
+
+    public String getGeneratedContent() {
+        return generatedContent;
     }
 
     public LocalDateTime getCreatedAt() {
