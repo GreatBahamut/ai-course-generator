@@ -161,6 +161,17 @@ Ahora:
 Este cambio fue realizado como preparación para:
 - integración con IA (Claude/OpenAI)
 - generación dinámica de contenido
-- posible introducción de flujos asíncronos (n8n)
+- introducción de flujos asíncronos (n8n)
 
 Se establece base de contrato estable para la API antes de introducir complejidad externa.
+
+## Sprint 4
+
+### Integración con IA
+
+- Toda integración con proveedores de IA vive en integration.ai.
+- El dominio nunca depende directamente de Claude u OpenAI.
+- El dominio depende únicamente de la interfaz AIClient.
+- La implementación concreta podrá cambiar sin modificar la lógica de negocio.
+- En la primera etapa AIClient utiliza una firma simple basada en String.
+- Si la integración requiere parámetros adicionales (modelo, temperatura, tokens, etc.), se reemplazará por un objeto de request dedicado (AIGenerationRequest), evitando romper la arquitectura.
