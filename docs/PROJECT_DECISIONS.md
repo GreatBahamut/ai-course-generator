@@ -63,3 +63,18 @@ Permite validar el backend sin depender de infraestructura externa. La migració
 - n8n únicamente orquesta procesos.
 - React nunca consume servicios externos directamente.
 - Toda integración con IA deberá implementarse mediante una interfaz `AIProvider`.
+
+## Sprint 2
+
+### Decisión: Aggregate Root
+
+El agregado principal del dominio será `CourseGeneration`.
+Un curso es el resultado de un proceso de generación, no el punto de entrada del sistema.
+
+### Decisión: Arquitectura por feature
+
+El código se organizará por funcionalidades (`course`, `automation`, `ai`, etc.) en lugar de únicamente por capas técnicas. Esto mejora la escalabilidad y la mantenibilidad del proyecto.
+
+### Decisión: No utilizar Lombok
+
+Se utilizarán clases Java explícitas para facilitar el aprendizaje, la comprensión del código y su defensa durante entrevistas técnicas.
