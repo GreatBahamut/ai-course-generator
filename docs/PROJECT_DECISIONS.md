@@ -78,3 +78,89 @@ El código se organizará por funcionalidades (`course`, `automation`, `ai`, etc
 ### Decisión: No utilizar Lombok
 
 Se utilizarán clases Java explícitas para facilitar el aprendizaje, la comprensión del código y su defensa durante entrevistas técnicas.
+
+## 🧱 Sprint 3.5 – API Contract Layer (DTOs)
+
+### 🎯 Decisión
+Se introdujo una capa de DTOs para desacoplar la API REST de las entidades JPA.
+
+Antes:
+- Controllers devolvían entidades `CourseGeneration`
+
+Ahora:
+- Controllers devuelven `CourseGenerationResponse`
+
+---
+
+### 📦 Estructura agregada
+
+#### DTO de respuesta
+- `CourseGenerationResponse`
+  - Contiene todos los campos de la entidad:
+    - id
+    - title
+    - topic
+    - targetAudience
+    - difficulty
+    - status
+    - createdAt
+    - updatedAt
+  - Diseño inmutable (campos final, sin setters)
+
+---
+
+#### Mapper manual
+- `CourseGenerationMapper`
+- Implementación:
+  - método estático `toResponse(CourseGeneration entity)`
+  - mapeo 1:1 sin lógica de negocio
+  - sin dependencias externas (no MapStruct / ModelMapper)
+
+---
+
+### 🧠 Decisión de arquitectura
+
+- El Controller deja de exponer entidades JPA directamente
+- El Service mantiene entidades de dominio sin cambios
+- El mapeo ocurre exclusivamente en la capa de Controller
+- Se mantiene separación de responsabilidades:
+  - Controller → API layer
+  - Service → business logic
+  - Repository → persistence
+  - Entity → domain model
+
+---
+
+### 🚫 Restricciones mantenidas
+
+- No se modificó lógica de negocio
+- No se modificó Service ni Repository
+- No se introdujeron frameworks de mapping
+- No se alteró el modelo de dominio
+
+---
+
+### ⚠️ Trade-offs aceptados
+
+- Mapeo manual requiere mantenimiento si la entidad cambia
+- No se implementó MapStruct para mantener simplicidad del MVP
+- Duplicación controlada entre Entity y Response DTO
+
+---
+
+### 🧭 Estado del sistema después del cambio
+
+- API desacoplada del modelo de persistencia ✔
+- Entidades JPA no expuestas directamente ✔
+- Arquitectura lista para integración con IA (Sprint 4) ✔
+
+---
+
+### 📌 Nota para Sprint 4
+
+Este cambio fue realizado como preparación para:
+- integración con IA (Claude/OpenAI)
+- generación dinámica de contenido
+- posible introducción de flujos asíncronos (n8n)
+
+Se establece base de contrato estable para la API antes de introducir complejidad externa.

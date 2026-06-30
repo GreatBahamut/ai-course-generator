@@ -1,7 +1,8 @@
 package com.aicoursegenerator.course.controller;
 
+import com.aicoursegenerator.course.controller.mapper.CourseGenerationMapper;
 import com.aicoursegenerator.course.controller.request.CreateCourseGenerationRequest;
-import com.aicoursegenerator.course.domain.CourseGeneration;
+import com.aicoursegenerator.course.controller.response.CourseGenerationResponse;
 import com.aicoursegenerator.course.service.CourseGenerationService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -24,37 +25,44 @@ public class CourseGenerationController {
     }
 
     @PostMapping
-    public CourseGeneration create(@RequestBody CreateCourseGenerationRequest request) {
-        return courseGenerationService.createCourseGeneration(
+    public CourseGenerationResponse create(@RequestBody CreateCourseGenerationRequest request) {
+        var created = courseGenerationService.createCourseGeneration(
                 request.getTitle(),
                 request.getTopic(),
                 request.getTargetAudience(),
                 request.getDifficulty()
         );
+        return CourseGenerationMapper.toResponse(created);
     }
 
     @GetMapping
-    public List<CourseGeneration> getAll() {
-        return courseGenerationService.getAll();
+    public List<CourseGenerationResponse> getAll() {
+        return courseGenerationService.getAll().stream()
+                .map(CourseGenerationMapper::toResponse)
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public CourseGeneration getById(@PathVariable Long id) {
-        return courseGenerationService.getById(id);
+    public CourseGenerationResponse getById(@PathVariable Long id) {
+        var courseGeneration = courseGenerationService.getById(id);
+        return CourseGenerationMapper.toResponse(courseGeneration);
     }
 
     @PatchMapping("/{id}/start")
-    public CourseGeneration start(@PathVariable Long id) {
-        return courseGenerationService.startGeneration(id);
+    public CourseGenerationResponse start(@PathVariable Long id) {
+        var courseGeneration = courseGenerationService.startGeneration(id);
+        return CourseGenerationMapper.toResponse(courseGeneration);
     }
 
     @PatchMapping("/{id}/complete")
-    public CourseGeneration complete(@PathVariable Long id) {
-        return courseGenerationService.markCompleted(id);
+    public CourseGenerationResponse complete(@PathVariable Long id) {
+        var courseGeneration = courseGenerationService.markCompleted(id);
+        return CourseGenerationMapper.toResponse(courseGeneration);
     }
 
     @PatchMapping("/{id}/fail")
-    public CourseGeneration fail(@PathVariable Long id) {
-        return courseGenerationService.markFailed(id);
+    public CourseGenerationResponse fail(@PathVariable Long id) {
+        var courseGeneration = courseGenerationService.markFailed(id);
+        return CourseGenerationMapper.toResponse(courseGeneration);
     }
 }
